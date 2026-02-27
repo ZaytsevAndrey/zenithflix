@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ZenithFlix
 
-## Getting Started
+AI-driven streaming platform UI — Frontend assessment (content browsing, watch history, video modal).
 
-First, run the development server:
+## Setup
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Build:** `npm run build`
+- **Tests:** `npm run test` (Vitest + React Testing Library)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project structure
 
-## Learn More
+```
+src/
+  app/           — Next.js App Router (layout, page, Providers, api/content)
+  components/    — Header, ContentBrowser, ContentRow, ContentCard, ContentCardSkeleton,
+                   ContentModal, WatchHistorySection, ImageWithFallback
+  store/         — Redux store, watchHistorySlice (persist)
+  hooks/         — useWatchHistory (Redux + persist)
+  types/         — ContentItem, ApiResponse, WatchHistoryItem, Pagination
+  data/          — mockContent (paginated trending + categories)
+  test/          — Vitest setup
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Features
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Content:** Three categories from API — Trending Now, For You, New Releases. Trending has horizontal infinite scroll with “load more” and loading indicator.
+- **Skeletons:** Loading skeletons for all sections: ContentCardSkeleton in each row (Trending, For You, New Releases), WatchHistorySection shows list skeletons while loading.
+- **Header:** Navigation links (Trending, For You, New Releases) with smooth scroll to sections; burger menu on mobile.
+- **Video modal:** Clicking a card opens a modal with video, custom controls: play/pause (including Space), volume (vertical popup slider), playback speed (popup), fullscreen, progress bar at bottom. Controls auto-hide after inactivity; volume/speed popups use `createPortal` and remain visible in fullscreen. Buttons use `focus-visible` only (no focus ring on click).
+- **Watch history:** Stored in Redux with `redux-persist` (localStorage). Progress is saved while watching; Watch History section shows items from history with progress bars. Rehydration from persist is normalized so the store always has an array.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Architecture
 
-## Deploy on Vercel
+- **API:** `GET /api/content?page=1` returns `{ categories: { trending, forYou, newReleases }, pagination }`. Mock data in `data/mockContent.ts`; pagination used for Trending infinite scroll.
+- **State:** Content lists, loading, error, selected item, and pagination live in `ContentBrowser`. Watch history is in Redux (`watchHistorySlice`) with persist; `useWatchHistory()` exposes `history`, `getProgress`, `setProgress`.
+- **Accessibility:** Modal has `role="dialog"`, focus on open, Escape to close. Content rows use `role="list"` / list semantics. Buttons use `focus-visible:ring` so the focus ring appears only for keyboard. No `aria-hidden` on focusable ancestors.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Assumptions
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **UI/UX:** Dark streaming-style layout. Cards scale on hover. Modal shows video with custom controls; “Play” drives real video playback and progress updates.
+- **Content:** Multiple categories; only Trending is paginated. Watch History displays only items that exist in the mock content (resolved by `id`).
+- **Persistence:** No backend for watch history — Redux persist uses localStorage key `persist:root` (or configured key).
