@@ -42,6 +42,10 @@ src/
 - **State:** Content lists, loading, error, selected item, and pagination live in `ContentBrowser`. Watch history is in Redux (`watchHistorySlice`) with persist; `useWatchHistory()` exposes `history`, `getProgress`, `setProgress`.
 - **Accessibility:** Modal has `role="dialog"`, focus on open, Escape to close. Content rows use `role="list"` / list semantics. Buttons use `focus-visible:ring` so the focus ring appears only for keyboard. No `aria-hidden` on focusable ancestors.
 
+## Code review (Part 1)
+
+See **[CODE_REVIEW.md](./CODE_REVIEW.md)** in the project root for the code review of the ContentBrowser snippet (fetch handling, useEffect cleanup, memoization, pagination).
+
 ## Assumptions
 
 - **UI/UX:** Dark streaming-style layout. Cards scale on hover. Modal shows video with custom controls; “Play” drives real video playback and progress updates.
