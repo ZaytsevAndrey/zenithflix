@@ -26,7 +26,7 @@ function ContentCardComponent({ item, progress = 0, onSelect }: ContentCardProps
     <article
       role="listitem"
       tabIndex={0}
-      className="group flex min-w-[260px] max-w-[260px] flex-shrink-0 cursor-pointer flex-col overflow-hidden rounded-lg border border-zinc-700 bg-zinc-800/80 transition-all duration-200 hover:scale-105 hover:border-zinc-500 hover:shadow-lg hover:shadow-black/40 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-zinc-900"
+      className="group flex min-w-[260px] max-w-[260px] flex-shrink-0 cursor-pointer flex-col overflow-hidden rounded-lg border border-zinc-700 bg-zinc-800/80 transition-all duration-200 hover:scale-105 hover:border-zinc-500 hover:shadow-lg hover:shadow-black/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900"
       aria-label={`${item.title}, ${item.year}, rating ${item.rating} out of 10`}
       onClick={handleClick}
       onKeyDown={handleKeyDown}

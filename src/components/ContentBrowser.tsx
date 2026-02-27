@@ -70,6 +70,7 @@ export function ContentBrowser() {
     const sentinel = loadMoreSentinelRef.current;
     if (!root || !sentinel) return;
 
+    let cancelled = false;
     const observer = new IntersectionObserver(
       (entries) => {
         if (!entries[0]?.isIntersecting || loadingMoreRef.current) return;
@@ -82,6 +83,7 @@ export function ContentBrowser() {
             return res.json();
           })
           .then((data: ApiResponse) => {
+            if (cancelled) return;
             const list = Array.isArray(data.categories?.trending)
               ? data.categories.trending
               : [];
@@ -90,7 +92,7 @@ export function ContentBrowser() {
           })
           .catch(() => {})
           .finally(() => {
-            setLoadingMore(false);
+            if (!cancelled) setLoadingMore(false);
             loadingMoreRef.current = false;
           });
       },
@@ -98,7 +100,10 @@ export function ContentBrowser() {
     );
 
     observer.observe(sentinel);
-    return () => observer.disconnect();
+    return () => {
+      cancelled = true;
+      observer.disconnect();
+    };
   }, [pagination.hasNext, loading]);
 
   const handleSelect = useCallback((item: ContentItem) => {
